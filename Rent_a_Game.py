@@ -27,18 +27,18 @@ class Rent_a_Game:
  
     def hashing_append(self, hash_key, videogame):
         if hash_key == 0:
-            group = 0  # Primer grupo
+            group = 0  
 
         elif hash_key == 1:
-            group = 1  # Segundo grupo
+            group = 1  
 
         else:
-            group = 2  # Tercer grupo
+            group = 2  
         
         if len(self.database[group]) < 3:
-            self.database[group].append(videogame) # Añadir videojuego al grupo
+            self.database[group].append(videogame) 
         else:
-            self.overflow_append(group, videogame)  # Grupo está llena, se añade videojuego a un grupo de overflow
+            self.overflow_append(group, videogame) 
 
     def overflow_append(self, group_num, videogame):    
         full = False
