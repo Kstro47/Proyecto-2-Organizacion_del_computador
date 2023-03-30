@@ -56,7 +56,7 @@ def model_input(database, overflowDatabase, msg = 'Ingresa el modelo del videoju
                 raise ValueError('El modelo debe tener 6 letras mayúsculas seguidas de 2 dígitos')
             
             if len(string) > 8:
-                raise Exception
+                raise ValueError('El modelo debe tener 6 letras mayúsculas seguidas de 2 dígitos')
 
             for videogames in database:
                 for videogame in videogames:
