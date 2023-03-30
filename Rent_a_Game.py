@@ -48,12 +48,12 @@ class Rent_a_Game:
                     group.append(group_num)
                     group.append(videogame)
                     full = False
-                    return print(" Juego guardado con éxito ")
+                    return
                 elif 1 <= len(group) < 4:
                     if group[0] == group_num:
                             group.append(videogame)
                             full = False
-                            return print(" Juego guardado con éxito")     
+                            return  
                 elif len(group) == 4:
                     if group[0] == group_num:
                         full = True
@@ -64,8 +64,8 @@ class Rent_a_Game:
 
 
     def register_videogame(self):
-        model = model_input(self.database)
-        tittle = tittle_input(self.database)
+        model = model_input(self.database, self.overflow_database)
+        tittle = tittle_input(self.database, self.overflow_database)
         price = videogame_price()
 
         videogame = Videogame(model, tittle, price, True)
@@ -77,11 +77,11 @@ class Rent_a_Game:
         print("\n¡Videojuego registrado con éxito!\n")
 
 
-    def search_videogame_model(self, options=[]):
+    def search_videogame(self, options=[]):
         print("¿Que acción desea realizar?")
         option = range_validation(options)
         if option == 0:
-            videogame_model = model_search_input('Ingrese el modelo del videojuego que desea buscar: ')
+            videogame_model = model_search_input('Ingrese el modelo del videojuego que desea buscar: ', self.database, self.overflow_database)
             hash_value = self.hash_key_function(videogame_model)
             videogames = self.database[hash_value]
             for videogame in videogames:
@@ -91,13 +91,13 @@ class Rent_a_Game:
                 if len(group) > 0:
                     if group[0] == hash_value:
                         for videogame in group:
-                            if videogame == int:
+                            if isinstance(videogame, int):
                                 continue
                             if videogame.model == videogame_model:
                                 return videogame
             return None
         if option == 1:
-            videogame_tittle = tittle_search_input('Ingrese el título del videojuego que desea buscar: ')
+            videogame_tittle = tittle_search_input('Ingrese el título del videojuego que desea buscar: ', self.database, self.overflow_database)
             for record in self.index:
                 if record.tittle == videogame_tittle:
                     key = record.group
@@ -109,7 +109,7 @@ class Rent_a_Game:
                         if len(group) > 0:
                             if group[0] == key:
                                 for videogame in group:
-                                    if videogame == int:
+                                    if isinstance(videogame, int):
                                         continue
                                     if videogame.tittle == videogame_tittle:
                                         return videogame
@@ -127,26 +127,52 @@ class Rent_a_Game:
         for videogames in self.overflow_database:
             if len(videogames) > 0:
                 for videogame in videogames:
-                    if videogame == int:
+                    if isinstance(videogame, int):
                         continue
                     else:
                         print(f'-- {videogame.show_primary()}')
-        delete_videogame = model_search_input('Ingresa el modelo del videojuego que deseas eliminar: ')
+        delete_model = model_search_input('Ingresa el modelo del videojuego que deseas eliminar: ', self.database, self.overflow_database)
         
-        for videogames in self.database:
-            for num, videogame in enumerate(videogames):
-                if videogame.model == delete_videogame:
-                    print("\n¿Seguro que quieres borrar este videojuego?\n")
-                    option = range_validation(options)
-                    if option == 0: 
-                        videogames.pop(num)
-                        print('Se ha borrado el videojuego correctamente.')
-                        return
-                    else:
-                        return
-        
-        print("El videojuego ingresado no se encuentra almacenado, vuelva a intentar.")
-    
+        hash_value = self.hash_key_function(delete_model)
+        videogames = self.database[hash_value]
+        for num, videogame in enumerate(videogames):
+            if videogame.model == delete_model:                    
+                idx = num
+                print("\n¿Seguro que quieres borrar este videojuego?\n")
+                option = range_validation(options)
+                if option == 0: 
+                    videogames.pop(idx)
+                    self.reorder_data(idx)
+                    print('Se ha borrado el videojuego correctamente.')
+                    return
+                else:
+                    return
+        for group in self.overflow_database:
+            if len(group) > 0:
+                if group[0] == hash_value:
+                    for num, videogame in enumerate(group):
+                        if isinstance(videogame, int):
+                            continue
+                        if videogame.model == delete_model:
+                            idx = num
+                            print("\n¿Seguro que quieres borrar este videojuego?\n")
+                            option = range_validation(options)
+                            if option == 0: 
+                                group.pop(idx)
+                                print('Se ha borrado el videojuego correctamente.')
+                                return
+                            else:
+                                return
+
+    def reorder_data(self, idx):
+        for videogames in self.overflow_database:
+            if len(videogames) > 0:
+                if videogames[0] == idx:
+                    self.database[idx].append(videogames[1])
+                    videogames.pop(1)
+                    if len(videogames) == 1:
+                        videogames.pop(0)
+
 
     def search_videogame_tittle(self):
         print("\nVideojuegos Registrados:\n")
@@ -157,7 +183,7 @@ class Rent_a_Game:
         for videogames in self.overflow_database:
             if len(videogames) > 0:
                 for videogame in videogames:
-                    if videogame == int:
+                    if isinstance(videogame, int):
                         continue
                     else:
                         print(f'-- {videogame.show_primary()}')
@@ -174,7 +200,7 @@ class Rent_a_Game:
                     if len(group) > 0:
                         if group[0] == key:
                             for videogame in group:
-                                if videogame == int:
+                                if isinstance(videogame, int):
                                     continue
                                 if videogame.tittle == videogame_tittle:
                                     return videogame
@@ -191,7 +217,7 @@ class Rent_a_Game:
         for videogames in self.overflow_database:
             if len(videogames) > 0:
                 for videogame in videogames:
-                    if videogame == int:
+                    if isinstance(videogame, int):
                         continue
                     else:
                         print(f'-- {videogame.show_primary()}')
@@ -200,10 +226,10 @@ class Rent_a_Game:
         if rent_game != None:
             if rent_game.status == True:
                 rent_game.status = False
-                print(f"El siguiente videojuego ahora se encuentra alquilado: {rent_game.show_primary()}")
+                print(f"\nEl siguiente videojuego ahora se encuentra alquilado: {rent_game.show_primary()}")
                 return
             else:
-                print(f"El siguiente juego ya se encuentra alquilado: {rent_game.show_primary()}")
+                print(f"\nEl siguiente juego ya se encuentra alquilado: {rent_game.show_primary()}")
 
     def return_videogame(self):
         """Devuelve un juego si fue alquilado."""
@@ -216,7 +242,7 @@ class Rent_a_Game:
         for videogames in self.overflow_database:
             if len(videogames) > 0:
                 for videogame in videogames:
-                    if videogame == int:
+                    if isinstance(videogame, int):
                         continue
                     else:
                         print(f'-- {videogame.show_primary()}')
@@ -225,10 +251,10 @@ class Rent_a_Game:
         if rent_game != None:
             if rent_game.status == False:
                 rent_game.status = True
-                print(f"El siguiente videojuego ahora se encuentra en stock: {rent_game.show_primary()}")
+                print(f"\nEl siguiente videojuego ahora se encuentra en stock: {rent_game.show_primary()}")
                 return
             else:
-                print(f"El siguiente juego ya se encuentra en stock: {rent_game.show_primary()}")
+                print(f"\nEl siguiente juego ya se encuentra en stock: {rent_game.show_primary()}")
 
 
     def menu(self):
@@ -245,6 +271,7 @@ class Rent_a_Game:
             if option == 0:
                 self.register_videogame()
                 print(self.database)
+                print(self.overflow_database)
 
             elif option == 1:
                 if len(self.database) > 0:
@@ -306,6 +333,8 @@ class Rent_a_Game:
                     file_object.write(text)
             for videogames in self.overflow_database:
                 for videogame in videogames:
+                    if isinstance(videogame, int):
+                        continue
                     if videogame.status == True:
                         status = "TRUE"
                     else:
