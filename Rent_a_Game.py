@@ -1,13 +1,13 @@
 from Videogame import Videogame
 from utils import *
-
+from IndexRecord import IndexRecord
 class Rent_a_Game:
     def __init__(self):
         self.database:list[Videogame] = [[] for _ in range(3)]
         self.overflow_database:list[Videogame] = [[] for _ in range(6)]
         self.capacity = 9
         self.overflow_capacity = 18
-        self.index = []
+        self.index:list[IndexRecord] = []
 
     def is_full(self):
         for sublist in self.database:
@@ -70,7 +70,9 @@ class Rent_a_Game:
 
         videogame = Videogame(model, tittle, price, True)
         key = self.hash_key_function(videogame.model)
+        index = IndexRecord(key, tittle)
         self.hashing_append(key, videogame)
+        self.index.append(index)
 
 
         print("\n¡Videojuego registrado con éxito!\n")
@@ -95,7 +97,22 @@ class Rent_a_Game:
                                 return videogame
             return None
         if option == 1:
-            
+            videogame_tittle = tittle_search_input('Ingrese el título del videojuego que desea buscar: ')
+            for record in self.index:
+                if record.tittle == videogame_tittle:
+                    key = record.group
+                    videogames = self.database[key]
+                    for videogame in videogames:
+                        if videogame.tittle == videogame_tittle:
+                            return videogame
+                    for group in self.overflow_database:
+                        if len(group) > 0:
+                            if group[0] == key:
+                                for videogame in group:
+                                    if videogame.tittle == videogame_tittle:
+                                        return videogame
+            return None
+                    
         
 
     def delete_videogame(self):
@@ -136,12 +153,11 @@ class Rent_a_Game:
 
             if option == 0:
                 self.register_videogame()
-                print (self.database)
+                print(self.database)
 
             elif option == 1:
                 if len(self.database) > 0:
                     found = self.search_videogame()
-                    print(found)
                     if found != None:
                         print(f"Se ha encontrado el siguiente videojuego: {found.show_primary()} ")
                     else:
@@ -184,7 +200,9 @@ class Rent_a_Game:
                         status = False
                     videogame = Videogame(model, tittle, price, status)
                     key = self.hash_key_function(videogame.model)
-                    self.hashing_append(key, videogame)                
+                    index = IndexRecord(key, tittle)
+                    self.hashing_append(key, videogame)           
+                    self.index.append(index)     
         file_object.close       
 
     def write_txt(self):

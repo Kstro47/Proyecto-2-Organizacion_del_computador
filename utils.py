@@ -15,6 +15,17 @@ def model_search_input(msg):
         except ValueError as e:
             print(f'Error: {str(e)}. Intente de nuevo.')
 
+def tittle_search_input(msg):
+    while True:
+        
+        try:
+            string = input(msg)
+            if len(string) > 10:
+                raise ValueError('El título debe tener menos de 10 caracteres')
+            return string
+        
+        except ValueError as e:
+            print(f'Error: {str(e)}. Intente de nuevo.')
 
 def model_input(database, msg = 'Ingresa el modelo del videojuego: '):
     while True:
