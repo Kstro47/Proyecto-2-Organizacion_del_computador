@@ -16,14 +16,14 @@ class Videogame:
         - Modelo: {self.model}
         - Título: {self.tittle}
         - Precio: Bs.{self.price}
-        - Estado: {self.status}
+        - Estado: {self.show_status()}
         '''
 
     def show_secondary(self):
         return f'''
         - Título: {self.tittle}
         - Precio: Bs.{self.price}
-        - Estado: {self.status}
+        - Estado: {self.show_status()}
         - Modelo: {self.model}
         '''
 

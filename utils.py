@@ -11,23 +11,32 @@ def model_search_input(msg):
             
             if len(string) > 8:
                 raise Exception
+                
             return string
         except ValueError as e:
             print(f'Error: {str(e)}. Intente de nuevo.')
 
-def tittle_search_input(msg):
+def tittle_search_input(msg,database,overflowDatabase):
     while True:
-        
         try:
             string = input(msg)
             if len(string) > 10:
                 raise ValueError('El título debe tener menos de 10 caracteres')
-            return string
-        
+            for videogames in database:
+                for videogame in videogames:
+                    if videogame.tittle == string:
+                        return string
+            for videogames in overflowDatabase:
+                for videogame in videogames:
+                    if videogame == int:
+                        continue
+                    if videogame.tittle == string:
+                        return string    
+            raise ValueError('El título ingresado no existe.')
         except ValueError as e:
             print(f'Error: {str(e)}. Intente de nuevo.')
 
-def model_input(database, msg = 'Ingresa el modelo del videojuego: '):
+def model_input(database, overflowDatabase, msg = 'Ingresa el modelo del videojuego: '):
     while True:
         try:
             string = input(msg)
@@ -40,16 +49,22 @@ def model_input(database, msg = 'Ingresa el modelo del videojuego: '):
                 raise Exception
 
             for videogames in database:
-                    for videogame in videogames:
-                        if videogame.model == string:
-                            raise ValueError('Este modelo ya existe en la base de datos')
+                for videogame in videogames:
+                    if videogame.model == string:
+                        raise ValueError('Este modelo ya existe en la base de datos')
+            for videogames in overflowDatabase:
+                for videogame in videogames:
+                    if videogame == int:
+                        continue
+                    if videogame.model == string:
+                        raise ValueError('Este modelo ya existe en la base de datos')
             return string
         except ValueError as e:
             print(f'Error: {str(e)}. Intente de nuevo.')
             
 
 
-def tittle_input(database, msg = 'Ingresa el título del videojuego: '):
+def tittle_input(database,overflowDatabase, msg = 'Ingresa el título del videojuego: '):
     while True:
         try:
             string = input(msg)
@@ -58,7 +73,13 @@ def tittle_input(database, msg = 'Ingresa el título del videojuego: '):
 
             for videogames in database:
                 for videogame in videogames:
-                    if videogame.model == string:
+                    if videogame.tittle == string:
+                        raise ValueError('Este modelo ya existe en la base de datos')
+            for videogames in overflowDatabase:
+                for videogame in videogames:
+                    if videogame == int:
+                        continue
+                    if videogame.tittle == string:
                         raise ValueError('Este modelo ya existe en la base de datos')
             return string
         except ValueError as e:
@@ -108,11 +129,3 @@ def range_validation(options):
             print('Error, escoja una opción válida.')
         else:
             return option
-
-
-
-
-
-
-
-
